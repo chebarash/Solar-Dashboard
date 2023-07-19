@@ -1,0 +1,18 @@
+@import "./base.css";
+
+body {
+  gap: 40px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 1024px) {
+}
+
+@media (max-width: 720px) {
+  body {
+    gap: 20px;
+    padding: 20px;
+  }
+}
