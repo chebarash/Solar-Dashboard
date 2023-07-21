@@ -14,8 +14,15 @@
   --text-green: #4db453;
   --text-red: #e93131;
 
-  --divider-light: #f8f8f8;
-  --divider-dark: #232d41;
+  --icon-light-1: #495270;
+  --icon-light-2: #1c274c;
+  --icon-dark-1: #b4bedd;
+  --icon-dark-2: #fff;
+
+  --divider-light-1: #f8f8f8;
+  --divider-light-2: #f3f3f3;
+  --divider-dark-1: #232d41;
+  --divider-dark-2: #202735;
 
   --text-light-1: #000;
   --text-light-2: #898989;
@@ -24,6 +31,14 @@
   --text-dark-1: #ffffff;
   --text-dark-2: #a8acb8;
   --text-dark-3: var(--text-dark-2);
+
+  --chart-light-1: #3193f9;
+  --chart-light-2: #9bccff;
+  --chart-dark-1: #0767ed;
+  --chart-dark-2: var(--chart-dark-1);
+
+  --shadow: 0px 0px 70px 0px rgba(28, 39, 76, 0.1),
+    0px 4px 20px 0px rgba(28, 39, 76, 0.05);
 }
 
 :root {
@@ -31,11 +46,21 @@
   --color-background-soft: var(--white-soft);
   --color-background-mute: var(--white-mute);
 
-  --color-border: var(--divider-light);
+  --color-icon: var(--icon-light-1);
+  --color-icon-active: var(--icon-light-2);
+
+  --color-divider: var(--divider-light-1);
+  --color-border: var(--divider-light-2);
 
   --color-heading: var(--text-light-1);
   --color-text: var(--text-light-2);
   --color-slider: var(--text-light-3);
+
+  --color-chart: var(--chart-light-1);
+  --color-chart-bg: var(--chart-light-2);
+
+  --box-shadow: var(--shadow);
+  --box-bg: #fff;
 
   --radius: 20px;
   --gap: 20px;
@@ -47,12 +72,28 @@
     --color-background-soft: var(--black-soft);
     --color-background-mute: var(--black-mute);
 
-    --color-border: var(--divider-dark);
+    --color-icon: var(--icon-dark-1);
+    --color-icon-active: var(--icon-dark-2);
+
+    --color-divider: var(--divider-dark-1);
+    --color-border: var(--divider-dark-2);
 
     --color-heading: var(--text-dark-1);
     --color-text: var(--text-dark-2);
     --color-slider: var(--text-dark-2);
+
+    --color-chart: var(--chart-dark-1);
+    --color-chart-bg: var(--chart-dark-2);
+
+    --box-shadow: none;
+    --box-bg: var(--blue);
   }
+}
+
+button {
+  all: unset;
+  transition: all 200ms linear;
+  cursor: pointer;
 }
 
 *,
@@ -67,14 +108,11 @@
   margin: 0;
   padding: 0;
   transition: all 200ms linear;
-}
-
-button {
-  all: unset;
+  user-select: none;
 }
 
 body {
-  overflow: hidden;
+  overflow: hidden auto;
   min-height: 100vh;
   color: var(--color-text);
   background: var(--color-background);

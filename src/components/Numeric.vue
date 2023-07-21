@@ -22,18 +22,22 @@
     gap: 5px;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .card span {
-    gap: 9px;
+    gap: 6px;
     display: flex;
     align-items: center;
+    overflow: hidden;
 }
 
 .title {
     color: var(--color-text);
     font-size: 18px;
     font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .value {
@@ -44,9 +48,11 @@
 
 .unit {
     color: var(--color-text);
-    font-size: 25px;
+    font-size: 20px;
     font-weight: 400;
-    padding-top: 6px;
+    padding-top: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 @media (max-width: 720px) {

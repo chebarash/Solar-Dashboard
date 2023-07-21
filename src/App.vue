@@ -4,6 +4,8 @@ import Numeric from './components/Numeric.vue'
 import Header from './components/Header.vue'
 import Chart from './components/Chart.vue'
 import Side from './components/Side.vue'
+import Bar from './components/Bar.vue'
+import Top from './components/Top.vue'
 
 type ReqType = { date: Date; time: number; cached: boolean };
 type ImpType = { date: Date; icons: Array<string> };
@@ -19,8 +21,8 @@ const categories: ObjType = {};
 
 const sortObject = (obj: ObjType) => Object.entries(obj).sort(([_a, a], [_b, b]) => b - a)
 
-async function getData() {
-  const res = await fetch("https://solariconset.com/analytics");
+const getData = async () => {
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}analytics`);
   const data = await res.json() as AnalyticsType;
   analytics.value = data;
   data.imports.map(({ icons }) => icons).flat().forEach((name) => {
@@ -32,6 +34,7 @@ async function getData() {
   })
   top.value = { icons: sortObject(icons), categories: sortObject(categories) }
 }
+
 
 getData()
 </script>
@@ -47,10 +50,10 @@ getData()
           <template #unit>раз</template>
         </Numeric>
         <Numeric>
-          <template #title>в среднем</template>
-          {{ parseFloat((analytics.imports.map(({ icons }) => icons.length).reduce((a, b) => a + b, 0) /
-            analytics.imports.length).toFixed(2)) }}
-          <template #unit>иконок</template>
+          <template #title>время отклика</template>
+          {{ parseFloat((analytics.requests.map(({ time }) => time).reduce((a, b) => a + b, 0) /
+            analytics.requests.length).toFixed(2)) || 0 }}
+          <template #unit>мс</template>
         </Numeric>
         <Numeric>
           <template #title>открытий с кешем</template>
@@ -65,23 +68,20 @@ getData()
       </article>
       <Chart>
         <template #title>Иконок импортировано</template>
-        <template #value>{{ analytics.imports.map(({ icons }) => icons.length).reduce((a, b) => a + b, 0) }}</template>
+        {{ analytics.imports.map(({ icons }) => icons.length).reduce((a, b) => a + b, 0) }}
       </Chart>
     </div>
     <article>
       <Side>
         <template #title>Топ иконок</template>
+        <div class="top">
+          <Top v-for="index in 8" :index="index - 1" :icons="top.icons" />
+        </div>
       </Side>
       <Side>
         <template #title>Категории</template>
         <div class="bar">
-          <button v-for="[name, num] of top.categories.slice(0, 6)">
-            <span :style="{ height: num / top.categories[0][1] * 100 + '%' }"></span>
-            <svg width="18" height="8" viewBox="0 0 18 8" fill="none">
-              <path d="M9 0C5.5 0 4 8 0 8H18C14 8 12.5 0 9 0Z" fill="var(--blue)" />
-            </svg>
-            <p>{{ `${name} - ${num}` }}</p>
-          </button>
+          <Bar v-for="index in 6" :index="index - 1" :categories="top.categories" />
         </div>
       </Side>
     </article>
@@ -104,7 +104,7 @@ main>div {
 
 main>article {
   display: grid;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: auto 1fr;
   gap: var(--gap);
   min-height: 70vh;
 }
@@ -122,69 +122,25 @@ main>article {
   position: relative;
 }
 
-.bar:hover,
 .bar:focus-within {
   padding-bottom: 58px;
 }
 
-.bar button {
-  display: flex;
-  align-items: flex-end;
+.top {
+  min-width: 270px;
   flex: 1;
-  min-width: 36px;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(62px, 1fr));
+  gap: 10px;
 }
 
-.bar svg {
-  opacity: 0;
-  margin-top: 20px;
-  position: absolute;
-  top: calc(100% - 49px);
-}
 
-.bar p {
-  line-height: 0px;
-  opacity: 0;
-  bottom: 5px;
-  position: absolute;
-  color: var(--text-dark-1);
-  font-size: 16px;
-  font-weight: 500;
-  border-radius: 20px;
-  background: var(--blue);
-  padding: 8px 10px;
-  width: max-content;
-}
-
-.bar button:hover p,
-.bar button:focus p,
-.bar button:hover svg,
-.bar button:focus svg {
-  opacity: 1;
-  line-height: 20px;
-  margin-top: 0;
-}
-
-.bar span {
-  opacity: .4;
-  background: var(--blue);
-  flex: 1;
-  border-radius: 10px;
-}
-
-.bar button:hover span,
-.bar button:focus span {
-  opacity: 1;
-}
 
 @media (max-width: 1024px) {
   .numeric {
     grid-template-columns: 1fr 1fr;
   }
-}
 
-
-@media (max-width: 720px) {
   main {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr auto;

@@ -12,7 +12,7 @@
     border-radius: var(--radius);
     background: var(--color-background-soft);
     padding: 30px 25px;
-    gap: 20px;
+    gap: 30px;
     display: flex;
     flex-direction: column;
 }
