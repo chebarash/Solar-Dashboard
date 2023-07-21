@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "start": "serve -C -l $APP_PORT -s dist",
     "dev": "vite",
     "build": "run-p type-check build-only",
     "preview": "vite preview",
@@ -11,6 +12,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "serve": "^14.2.0",
     "vue": "^3.3.4"
   },
   "devDependencies": {
