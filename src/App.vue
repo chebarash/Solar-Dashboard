@@ -4,6 +4,7 @@ import Numeric from './components/Numeric.vue'
 import Header from './components/Header.vue'
 import Chart from './components/Chart.vue'
 import Side from './components/Side.vue'
+import Line from './components/Line.vue'
 import Bar from './components/Bar.vue'
 import Top from './components/Top.vue'
 
@@ -12,7 +13,6 @@ type ImpType = { date: Date; icons: Array<string> };
 type AnalyticsType = { imports: Array<ImpType>, requests: Array<ReqType> }
 type ObjType = { [name: string]: number }
 type ArrType = Array<[string, number]>
-
 
 const analytics = ref<AnalyticsType>({ imports: [], requests: [] });
 const top = ref<{ icons: ArrType, categories: ArrType }>({ icons: [], categories: [] });
@@ -68,7 +68,8 @@ getData()
       </article>
       <Chart>
         <template #title>Иконок импортировано</template>
-        {{ analytics.imports.map(({ icons }) => icons.length).reduce((a, b) => a + b, 0) }}
+        <template #value>{{ analytics.imports.map(({ icons }) => icons.length).reduce((a, b) => a + b, 0) }}</template>
+        <Line v-if="analytics.imports.length" :imports="analytics.imports" />
       </Chart>
     </div>
     <article>

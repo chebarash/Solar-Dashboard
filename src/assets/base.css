@@ -19,7 +19,7 @@
   --icon-dark-1: #b4bedd;
   --icon-dark-2: #fff;
 
-  --divider-light-1: #f8f8f8;
+  --divider-light-1: #f2f2f2;
   --divider-light-2: #f3f3f3;
   --divider-dark-1: #232d41;
   --divider-dark-2: #202735;
@@ -35,7 +35,7 @@
   --chart-light-1: #3193f9;
   --chart-light-2: #9bccff;
   --chart-dark-1: #0767ed;
-  --chart-dark-2: var(--chart-dark-1);
+  --chart-dark-2: #0767ed99;
 
   --shadow: 0px 0px 70px 0px rgba(28, 39, 76, 0.1),
     0px 4px 20px 0px rgba(28, 39, 76, 0.05);
