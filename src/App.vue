@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import Numeric from './components/Numeric.vue'
-import Header from './components/Header.vue'
-import Chart from './components/Chart.vue'
-import Side from './components/Side.vue'
-import Line from './components/Line.vue'
-import Bar from './components/Bar.vue'
-import Top from './components/Top.vue'
+import NumericItem from './components/NumericItem.vue'
+import HeaderItem from './components/HeaderItem.vue'
+import ChartItem from './components/ChartItem.vue'
+import SideItem from './components/SideItem.vue'
+import LineItem from './components/LineItem.vue'
+import BarItem from './components/BarItem.vue'
+import TopItem from './components/TopItem.vue'
 
 type ReqType = { date: Date; time: number; cached: boolean };
 type ImpType = { date: Date; icons: Array<string> };
@@ -19,7 +19,7 @@ const top = ref<{ icons: ArrType, categories: ArrType }>({ icons: [], categories
 const icons: ObjType = {}
 const categories: ObjType = {};
 
-const sortObject = (obj: ObjType) => Object.entries(obj).sort(([_a, a], [_b, b]) => b - a)
+const sortObject = (obj: ObjType) => Object.entries(obj).sort((a, b) => b[1] - a[1])
 
 const getData = async () => {
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}analytics`);
@@ -40,51 +40,35 @@ getData()
 </script>
 
 <template>
-  <Header />
+  <HeaderItem />
   <main>
     <div>
       <article class="numeric">
-        <Numeric>
-          <template #title>импорт</template>
-          {{ analytics.imports.length }}
-          <template #unit>раз</template>
-        </Numeric>
-        <Numeric>
-          <template #title>отклик</template>
-          {{ parseFloat((analytics.requests.map(({ time }) => time).reduce((a, b) => a + b, 0) /
-            analytics.requests.length).toFixed(2)) || 0 }}
-          <template #unit>мс</template>
-        </Numeric>
-        <Numeric>
-          <template #title>с кешем</template>
-          {{ analytics.requests.filter(({ cached }) => cached).length }}
-          <template #unit>раз</template>
-        </Numeric>
-        <Numeric>
-          <template #title>без кеша</template>
-          {{ analytics.requests.filter(({ cached }) => !cached).length }}
-          <template #unit>раз</template>
-        </Numeric>
+        <NumericItem :value="analytics.imports.length">imported</NumericItem>
+        <NumericItem :value="parseFloat((analytics.requests.map(({ time }) => time).reduce((a, b) => a + b, 0) /
+          analytics.requests.length).toFixed(2)) || 0" unit="ms">response</NumericItem>
+        <NumericItem :value="analytics.requests.filter(({ cached }) => cached).length">cache</NumericItem>
+        <NumericItem :value="analytics.requests.filter(({ cached }) => !cached).length">without</NumericItem>
       </article>
-      <Chart>
-        <template #title>Иконок импортировано</template>
+      <ChartItem>
+        <template #title>icons imported</template>
         <template #value>{{ analytics.imports.map(({ icons }) => icons.length).reduce((a, b) => a + b, 0) }}</template>
-        <Line v-if="analytics.imports.length" :imports="analytics.imports" />
-      </Chart>
+        <LineItem v-if="analytics.imports.length" :imports="analytics.imports" />
+      </ChartItem>
     </div>
     <article>
-      <Side>
-        <template #title>Топ иконок</template>
+      <SideItem>
+        <template #title>Top icons</template>
         <div class="top">
-          <Top v-for="index in 8" :index="index - 1" :icons="top.icons" />
+          <TopItem v-for="index in 8" :key="index" :index="index - 1" :icons="top.icons" />
         </div>
-      </Side>
-      <Side>
-        <template #title>Категории</template>
+      </SideItem>
+      <SideItem>
+        <template #title>Categories</template>
         <div class="bar">
-          <Bar v-for="index in 6" :index="index - 1" :categories="top.categories" />
+          <BarItem v-for="index in 6" :key="index" :index="index - 1" :categories="top.categories" />
         </div>
-      </Side>
+      </SideItem>
     </article>
   </main>
 </template>

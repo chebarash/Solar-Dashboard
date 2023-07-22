@@ -13,6 +13,7 @@ const width = ref<number>(0);
 const count: { [date: string]: number } = {};
 
 const getDateString = (date: Date) => new Date(date).toLocaleString('en-GB').split(`, `)[0]
+const getUnit = (n: number) => `${n} time${n !== 1 ? `s` : ``}`
 
 props.imports.forEach(({ date }) => {
     const name = getDateString(date)
@@ -27,7 +28,7 @@ const maxValue = Math.max(...Object.values(count))
 
 for (let i = 7; i >= 0; i--) {
     const date = new Date(now - day * i)
-    week.push([{ weekday: date.toLocaleString('ru', { weekday: 'short', }), date: date.getDate() }, count[getDateString(date)] || 0])
+    week.push([{ weekday: date.toLocaleString('en', { weekday: 'short', }), date: date.getDate() }, count[getDateString(date)] || 0])
 }
 
 const chart = () => {
@@ -38,7 +39,7 @@ const chart = () => {
     height.value = box.clientHeight - 90;
 
     const step = width.value / 7;
-    const points: Array<Coord> = week.map(([_, value], i) => ({ x: i * step, y: (1 - value / maxValue) * (height.value - 10) + 5 }))
+    const points: Array<Coord> = week.map((day, i) => ({ x: i * step, y: (1 - day[1] / maxValue) * (height.value - 10) + 5 }))
 
     d.value = `M ${points[0].x} ${points[0].y}`
     bg.value = `M ${0} ${height.value}\nL ${points[0].x} ${points[0].y}`
@@ -111,7 +112,7 @@ onMounted(() => {
             </defs>
         </svg>
         <div class="hint" :style="{ top: `${hint.y - 66 + 7}px`, left: `${hint.x + 40}px` }">
-            <p>{{ `${Math.round((1 - hint.y / height) * maxValue)} раз` }}</p>
+            <p>{{ getUnit(Math.round((1 - hint.y / height) * maxValue)) }}</p>
             <svg width="18" height="8" viewBox="0 0 18 8" fill="none">
                 <path d="M9 8C5.5 8 4 0 0 0H18C14 0 12.5 8 9 8Z" fill="var(--blue)" />
             </svg>
@@ -120,16 +121,16 @@ onMounted(() => {
         <div class="graph">
             <div class="vertical">
                 <ul class="values">
-                    <li v-for=" index  in  4 ">
+                    <li v-for="index in 4" :key="index">
                         <p class="value">{{ +(maxValue / 3 * (index - 1)).toFixed(1) }}</p>
                     </li>
                 </ul>
                 <ul class="lines">
-                    <li v-for=" _  in  4 "></li>
+                    <li v-for="index in 4" :key="index"></li>
                 </ul>
             </div>
             <ul class="horizontal">
-                <li v-for="( [{ weekday, date }], index ) of  week ">
+                <li v-for="( [{ weekday, date }], index ) of  week" :key="index">
                     <p class="weekday" v-if="index">{{ weekday }}</p>
                     <p class="date" v-if="index">{{ date }}</p>
                 </li>
@@ -180,13 +181,14 @@ onMounted(() => {
 }
 
 .line {
+    cursor: crosshair;
     position: absolute;
     top: 0;
     right: 10px;
     bottom: 90px;
     left: 40px;
     width: calc(100% - 50px);
-    height: calc(100% - 90px);
+    height: 100%;
 }
 
 path {
@@ -251,7 +253,7 @@ li {
 }
 
 .value {
-    color: var(--color-text);
+    color: var(--color-heading);
     font-size: 14px;
     font-weight: 500;
 }

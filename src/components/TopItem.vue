@@ -8,10 +8,10 @@ const getIconUrl = (fullName: string) => {
 </script>
 
 <template>
-    <button>
-        <div :style="{ opacity: icons.length ? 0 : 0.5 }"></div>
-        <span v-if="icons.length" :style="{ maskImage: `url('${getIconUrl(icons[index][0])}')`, maskSize: `cover` }"></span>
-        <p v-if="icons.length">{{ icons[index][1] }}</p>
+    <button :title="icons[index] ? icons[index][0] : ``">
+        <div :style="{ opacity: icons[index] ? 0 : 0.5 }"></div>
+        <span v-if="icons[index]" :style="{ maskImage: `url('${getIconUrl(icons[index][0])}')`, maskSize: `cover` }"></span>
+        <p v-if="icons[index]">{{ icons[index][1] }}</p>
     </button>
 </template>
 

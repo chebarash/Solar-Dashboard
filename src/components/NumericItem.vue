@@ -1,14 +1,19 @@
+<script setup lang="ts">
+defineProps<{ value: number, unit?: string }>()
+const getUnit = (n: number) => `time${n !== 1 ? `s` : ``}`
+</script>
+
 <template>
     <article class="card">
         <p class="title">
-            <slot name="title"></slot>
+            <slot></slot>
         </p>
         <span>
             <p class="value">
-                <slot></slot>
+                {{ value }}
             </p>
             <p class="unit">
-                <slot name="unit"></slot>
+                {{ unit || getUnit(value) }}
             </p>
         </span>
     </article>
@@ -50,7 +55,7 @@
     color: var(--color-text);
     font-size: 20px;
     font-weight: 400;
-    padding-top: 8px;
+    padding-top: 14px;
     overflow: hidden;
     text-overflow: ellipsis;
 }
