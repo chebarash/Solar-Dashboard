@@ -45,23 +45,23 @@ getData()
     <div>
       <article class="numeric">
         <Numeric>
-          <template #title>импортировано</template>
+          <template #title>импорт</template>
           {{ analytics.imports.length }}
           <template #unit>раз</template>
         </Numeric>
         <Numeric>
-          <template #title>время отклика</template>
+          <template #title>отклик</template>
           {{ parseFloat((analytics.requests.map(({ time }) => time).reduce((a, b) => a + b, 0) /
             analytics.requests.length).toFixed(2)) || 0 }}
           <template #unit>мс</template>
         </Numeric>
         <Numeric>
-          <template #title>открытий с кешем</template>
+          <template #title>с кешем</template>
           {{ analytics.requests.filter(({ cached }) => cached).length }}
           <template #unit>раз</template>
         </Numeric>
         <Numeric>
-          <template #title>открытий без кеша</template>
+          <template #title>без кеша</template>
           {{ analytics.requests.filter(({ cached }) => !cached).length }}
           <template #unit>раз</template>
         </Numeric>

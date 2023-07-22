@@ -34,8 +34,10 @@
 
   --chart-light-1: #3193f9;
   --chart-light-2: #9bccff;
+  --chart-light-3: #9bccff00;
   --chart-dark-1: #0767ed;
   --chart-dark-2: #0767ed99;
+  --chart-dark-3: #0767ed00;
 
   --shadow: 0px 0px 70px 0px rgba(28, 39, 76, 0.1),
     0px 4px 20px 0px rgba(28, 39, 76, 0.05);
@@ -57,7 +59,8 @@
   --color-slider: var(--text-light-3);
 
   --color-chart: var(--chart-light-1);
-  --color-chart-bg: var(--chart-light-2);
+  --color-chart-bg-1: var(--chart-light-2);
+  --color-chart-bg-2: var(--chart-light-3);
 
   --box-shadow: var(--shadow);
   --box-bg: #fff;
@@ -83,7 +86,8 @@
     --color-slider: var(--text-dark-2);
 
     --color-chart: var(--chart-dark-1);
-    --color-chart-bg: var(--chart-dark-2);
+    --color-chart-bg-1: var(--chart-dark-2);
+    --color-chart-bg-2: var(--chart-dark-3);
 
     --box-shadow: none;
     --box-bg: var(--blue);
