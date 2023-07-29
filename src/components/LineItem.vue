@@ -24,12 +24,11 @@ const now = Date.now()
 const day = 1000 * 60 * 60 * 24
 
 const week: Array<[{ weekday: string, date: number }, number]> = []
-const maxValue = Math.max(...Object.values(count))
-
 for (let i = 7; i >= 0; i--) {
     const date = new Date(now - day * i)
     week.push([{ weekday: date.toLocaleString('en', { weekday: 'short', }), date: date.getDate() }, count[getDateString(date)] || 0])
 }
+const maxValue = Math.max(...week.map((w) => w[1]))
 
 const chart = () => {
     const box = document.querySelector(".box");
@@ -66,7 +65,7 @@ const chart = () => {
 }
 
 const findY = (x: number) => {
-    const path = document.querySelector(`path`)
+    const path = document.querySelector<SVGPathElement>(`path.LineChart`);
     if (!path) return 0;
     const pathLength = path.getTotalLength()
     let start = 0, end = pathLength, target = (start + end) / 2;
@@ -100,10 +99,11 @@ onMounted(() => {
         <svg class="line" @mousemove="(e) => {
             const rect = (e.target as HTMLElement).getBoundingClientRect()
             const x = e.clientX - rect.left
-            hint = { x, y: findY(e.clientX - rect.left) }
+            hint = { x, y: findY(x) }
         }">
             <path fill="url('#bg')" :d="bg" />
-            <path fill="none" :d="d" stroke-width="4" stroke="var(--color-chart)" stroke-linecap="round" />
+            <path className="LineChart" fill="none" :d="d" stroke-width="4" stroke="var(--color-chart)"
+                stroke-linecap="round" />
             <defs>
                 <linearGradient id="bg" gradientTransform="rotate(90)">
                     <stop offset="0" stop-color="var(--color-chart-bg-1)" />
