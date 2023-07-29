@@ -102,7 +102,7 @@ onMounted(() => {
             hint = { x, y: findY(x) }
         }">
             <path fill="url('#bg')" :d="bg" />
-            <path className="LineChart" fill="none" :d="d" stroke-width="4" stroke="var(--color-chart)"
+            <path class="LineChart" fill="none" :d="d" stroke-width="4" stroke="var(--color-chart)"
                 stroke-linecap="round" />
             <defs>
                 <linearGradient id="bg" gradientTransform="rotate(90)">
