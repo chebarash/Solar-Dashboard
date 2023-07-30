@@ -1,13 +1,16 @@
+<script setup lang="ts">
+defineProps<{ value: number | string, title: string }>()
+</script>
+
 <template>
     <article>
-        <span>
-            <p class="value">
-                <slot name="value"></slot>
-            </p>
-            <p class="title">
-                <slot name="title"></slot>
-            </p>
-        </span>
+        <div>
+            <span>
+                <p class="value">{{ value }}</p>
+                <p class="title">{{ title }} </p>
+            </span>
+            <slot name="switch"></slot>
+        </div>
         <slot></slot>
     </article>
 </template>
@@ -22,6 +25,12 @@ article {
     display: grid;
     grid-template-rows: auto 1fr;
     position: relative;
+}
+
+div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 span {

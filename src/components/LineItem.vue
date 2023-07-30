@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-const props = defineProps<{ imports: Array<{ date: Date; icons: Array<string> }> }>()
+import { ref, onMounted, watch } from 'vue';
+const props = defineProps<{
+    period: { length: number, unit: number, options: Intl.DateTimeFormatOptions, name?: Intl.DateTimeFormatOptions, date: Intl.DateTimeFormatOptions },
+    imports: Array<{ date: Date; icons: Array<string> }>
+}>()
 
 type Coord = { x: number, y: number }
 
@@ -9,26 +12,35 @@ const bg = ref<string>(``);
 const hint = ref<Coord>({ x: 0, y: 0 });
 const height = ref<number>(0);
 const width = ref<number>(0);
+const maxValue = ref<number>(0);
+const list = ref<Array<[{ name?: string, date: string }, number]>>([]);
 
-const count: { [date: string]: number } = {};
-
-const getDateString = (date: Date) => new Date(date).toLocaleString('en-GB').split(`, `)[0]
 const getUnit = (n: number) => `${n} time${n !== 1 ? `s` : ``}`
 
-props.imports.forEach(({ date }) => {
-    const name = getDateString(date)
-    count[name] = (count[name] || 0) + 1;
-});
+const setPeriod = () => {
+    const now = new Date()
+    now.setMinutes(0)
+    now.setSeconds(0)
+    const count: { [date: string]: number } = {};
+    const getDateString = (date: Date, opt: Intl.DateTimeFormatOptions) => new Date(date).toLocaleString('en-GB', opt)
+    props.imports.forEach(({ date }) => {
+        const name = getDateString(date, props.period.options)
+        count[name] = (count[name] || 0) + 1;
+    });
+    const l: Array<[{ name?: string, date: string }, number]> = []
+    for (let i = props.period.length; i >= 0; i--) {
+        const date = new Date(now.getTime() - props.period.unit * i)
+        l.push([{
+            name: props.period.name ? getDateString(date, props.period.name) : undefined,
+            date: getDateString(date, props.period.date),
+        }, count[getDateString(date, props.period.options)] || 0])
+    }
 
-const now = Date.now()
-const day = 1000 * 60 * 60 * 24
+    list.value = l
+    maxValue.value = Math.max(...l.map((v) => v[1]))
 
-const week: Array<[{ weekday: string, date: number }, number]> = []
-for (let i = 7; i >= 0; i--) {
-    const date = new Date(now - day * i)
-    week.push([{ weekday: date.toLocaleString('en', { weekday: 'short', }), date: date.getDate() }, count[getDateString(date)] || 0])
+    chart()
 }
-const maxValue = Math.max(...week.map((w) => w[1]))
 
 const chart = () => {
     const box = document.querySelector(".box");
@@ -37,8 +49,8 @@ const chart = () => {
     width.value = box.clientWidth - 50;
     height.value = box.clientHeight - 90;
 
-    const step = width.value / 7;
-    const points: Array<Coord> = week.map((day, i) => ({ x: i * step, y: (1 - day[1] / maxValue) * (height.value - 10) + 5 }))
+    const step = width.value / props.period.length;
+    const points: Array<Coord> = list.value.map((day, i) => ({ x: i * step, y: (1 - day[1] / maxValue.value) * (height.value - 10) + 5 }))
 
     d.value = `M ${points[0].x} ${points[0].y}`
     bg.value = `M ${0} ${height.value}\nL ${points[0].x} ${points[0].y}`
@@ -90,8 +102,10 @@ const findY = (x: number) => {
 
 onMounted(() => {
     window.addEventListener('resize', chart)
-    chart()
+    setPeriod()
 })
+
+watch(props, setPeriod)
 </script>
 
 <template>
@@ -130,8 +144,8 @@ onMounted(() => {
                 </ul>
             </div>
             <ul class="horizontal">
-                <li v-for="( [{ weekday, date }], index ) of  week" :key="index">
-                    <p class="weekday" v-if="index">{{ weekday }}</p>
+                <li v-for="( [{ name, date }], index ) of  list" :key="index">
+                    <p class="weekday" v-if="index && name">{{ name }}</p>
                     <p class="date" v-if="index">{{ date }}</p>
                 </li>
             </ul>
@@ -242,6 +256,10 @@ path {
 
 .horizontal li {
     width: 20px;
+}
+
+.horizontal li:nth-last-child(n+10)~li:nth-of-type(even) {
+    display: none;
 }
 
 li {

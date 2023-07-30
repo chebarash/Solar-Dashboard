@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import NumericItem from './components/NumericItem.vue'
 import HeaderItem from './components/HeaderItem.vue'
+import SwitchItem from './components/SwitchItem.vue'
 import ChartItem from './components/ChartItem.vue'
 import SideItem from './components/SideItem.vue'
 import LineItem from './components/LineItem.vue'
@@ -13,6 +14,19 @@ type ImpType = { date: Date; icons: Array<string> };
 type AnalyticsType = { imports: Array<ImpType>, requests: Array<ReqType> }
 type ObjType = { [name: string]: number }
 type ArrType = Array<[string, number]>
+type CurType = { length: number, unit: number, options: Intl.DateTimeFormatOptions, name?: Intl.DateTimeFormatOptions, date: Intl.DateTimeFormatOptions }
+
+const minute = 1000 * 60
+const hour = minute * 60
+const day = hour * 24
+
+const periods: { [name: string]: CurType } = {
+  '1H': { length: 30, unit: minute * 2, options: { hour: `2-digit`, minute: `2-digit` }, date: { minute: `2-digit` } },
+  '1D': { length: 24, unit: hour, options: { day: `2-digit`, hour: `2-digit` }, date: { hour: `2-digit` } },
+  '1W': { length: 7, unit: day, options: { day: `2-digit`, month: `2-digit`, year: `2-digit` }, name: { weekday: `short` }, date: { day: `2-digit` } },
+  '1M': { length: 31, unit: day, options: { month: `short`, day: `2-digit` }, name: { month: `short` }, date: { day: `2-digit` } },
+}
+const current = ref<CurType>(periods[`1W`]);
 
 const analytics = ref<AnalyticsType>({ imports: [], requests: [] });
 const top = ref<{ icons: ArrType, categories: ArrType }>({ icons: [], categories: [] });
@@ -50,10 +64,14 @@ getData()
         <NumericItem :value="analytics.requests.filter(({ cached }) => cached).length">cache</NumericItem>
         <NumericItem :value="analytics.requests.filter(({ cached }) => !cached).length">without</NumericItem>
       </article>
-      <ChartItem>
-        <template #title>icons imported</template>
-        <template #value>{{ analytics.imports.map(({ icons }) => icons.length).reduce((a, b) => a + b, 0) }}</template>
-        <LineItem v-if="analytics.imports.length" :imports="analytics.imports" />
+      <ChartItem title="icons imported"
+        :value="analytics.imports.map(({ icons }) => icons.length).reduce((a, b) => a + b, 0)">
+        <template #switch>
+          <SwitchItem name="period" :values="periods" :update="(index: CurType) => {
+            current = index
+          }" />
+        </template>
+        <LineItem v-if="analytics.imports.length" :imports="analytics.imports" :period="current" />
       </ChartItem>
     </div>
     <article>
