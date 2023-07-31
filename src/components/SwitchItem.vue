@@ -27,13 +27,11 @@ ul {
 li {
     display: flex;
     position: relative;
-    cursor: pointer;
 }
 
 input {
     position: absolute;
     opacity: 0;
-    cursor: pointer;
     height: 0;
     width: 0;
 }
@@ -51,11 +49,40 @@ p {
     font-size: 18px;
     font-weight: 400;
     text-align: center;
+    cursor: pointer;
 }
 
 input:checked~p {
     color: var(--color-heading);
     background: var(--box-bg);
     box-shadow: var(--box-shadow);
+}
+
+@media (max-width: 720px) {
+    ul {
+        position: absolute;
+        top: 25px;
+        right: 20px;
+        grid-template-columns: 1fr;
+        border-radius: 24px;
+        z-index: 9;
+        gap: 0;
+    }
+
+    p {
+        display: none;
+    }
+
+    ul:hover p {
+        display: flex;
+    }
+
+    input:checked~p {
+        display: flex;
+        padding: 12px 16px;
+        color: var(--color-heading);
+        box-shadow: var(--box-shadow);
+        background: transparent;
+    }
 }
 </style>

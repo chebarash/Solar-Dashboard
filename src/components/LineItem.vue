@@ -19,8 +19,6 @@ const getUnit = (n: number) => `${n} time${n !== 1 ? `s` : ``}`
 
 const setPeriod = () => {
     const now = new Date()
-    now.setMinutes(0)
-    now.setSeconds(0)
     const count: { [date: string]: number } = {};
     const getDateString = (date: Date, opt: Intl.DateTimeFormatOptions) => new Date(date).toLocaleString('en-GB', opt)
     props.imports.forEach(({ date }) => {
@@ -288,6 +286,7 @@ li {
     font-weight: 500;
 }
 
+
 @media (max-width: 720px) {
 
     .value {
@@ -300,6 +299,11 @@ li {
 
     .date {
         font-size: 14px;
+    }
+
+    .horizontal li:nth-last-child(n+10)~li:nth-child(3n-1),
+    .horizontal li:nth-last-child(n+10)~li:nth-child(3n) {
+        display: none;
     }
 }
 </style>

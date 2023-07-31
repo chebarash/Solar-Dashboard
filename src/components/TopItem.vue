@@ -64,4 +64,21 @@ div {
     background: var(--color-icon);
     position: absolute;
 }
+
+@media (max-width: 720px) {
+
+    button {
+        box-shadow: var(--box-shadow);
+    }
+
+    span {
+        background: var(--color-icon-active);
+    }
+
+    p {
+        margin-top: 6px;
+        font-size: 14px;
+        font-weight: 400;
+    }
+}
 </style>
