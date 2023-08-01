@@ -14,24 +14,33 @@ type ImpType = { date: Date; icons: Array<string> };
 type AnalyticsType = { imports: Array<ImpType>, requests: Array<ReqType> }
 type ObjType = { [name: string]: number }
 type ArrType = Array<[string, number]>
-type CurType = { length: number, unit: number, options: Intl.DateTimeFormatOptions, name?: Intl.DateTimeFormatOptions, date: Intl.DateTimeFormatOptions }
+type PerType = { length: number, unit: number, options: Intl.DateTimeFormatOptions, name?: Intl.DateTimeFormatOptions, date: Intl.DateTimeFormatOptions }
+type CurType = '1H' | '1D' | '1W' | '1M'
+type ValType = 'imports' | 'requests'
 
 const minute = 1000 * 60
 const hour = minute * 60
 const day = hour * 24
 
-const periods: { [name: string]: CurType } = {
-  '1H': { length: 30, unit: minute * 2, options: { hour: `2-digit`, minute: `2-digit` }, date: { minute: `2-digit` } },
-  '1D': { length: 24, unit: hour, options: { day: `2-digit`, hour: `2-digit` }, date: { hour: `2-digit` } },
-  '1W': { length: 7, unit: day, options: { day: `2-digit`, month: `2-digit`, year: `2-digit` }, name: { weekday: `short` }, date: { day: `2-digit` } },
-  '1M': { length: 31, unit: day, options: { month: `short`, day: `2-digit` }, name: { month: `short` }, date: { day: `2-digit` } },
-}
-const current = ref<CurType>(periods[`1W`]);
-
 const analytics = ref<AnalyticsType>({ imports: [], requests: [] });
 const top = ref<{ icons: ArrType, categories: ArrType }>({ icons: [], categories: [] });
 const icons: ObjType = {}
 const categories: ObjType = {};
+
+const base: Intl.DateTimeFormatOptions = { year: `numeric`, month: `2-digit`, day: `2-digit` }
+
+const periods = ref<{ [name: string]: PerType }>({
+  '1H': { length: 60, unit: minute, options: { ...base, hour: `2-digit`, minute: `2-digit` }, date: { hour: `2-digit`, minute: `2-digit` } },
+  '1D': { length: 24, unit: hour, options: { ...base, hour: `2-digit` }, date: { hour: `2-digit`, minute: `2-digit` } },
+  '1W': { length: 7, unit: day, options: base, name: { weekday: `short` }, date: { day: `2-digit` } },
+  '1M': { length: 31, unit: day, options: base, name: { month: `short` }, date: { day: `2-digit` } },
+});
+const current = ref<CurType>(`1W`);
+
+const values: { [name: string]: ValType } = {
+  'imports': `imports`, 'requests': `requests`
+}
+const value = ref<ValType>(`imports`);
 
 const sortObject = (obj: ObjType) => Object.entries(obj).sort((a, b) => b[1] - a[1])
 
@@ -67,11 +76,16 @@ getData()
       <ChartItem title="icons imported"
         :value="analytics.imports.map(({ icons }) => icons.length).reduce((a, b) => a + b, 0)">
         <template #switch>
-          <SwitchItem name="period" :values="periods" :update="(index: CurType) => {
-            current = index
-          }" />
+          <div class="switch">
+            <SwitchItem def="1W" name="period" :values="periods" :update="(index: CurType) => {
+              current = index
+            }" />
+            <SwitchItem def="imports" name="values" :values="values" :update="(index: 'imports' | 'requests') => {
+              value = index
+            }" />
+          </div>
         </template>
-        <LineItem v-if="analytics.imports.length" :imports="analytics.imports" :period="current" />
+        <LineItem v-if="analytics.imports.length" :data="analytics[value]" :period="periods[current]" />
       </ChartItem>
     </div>
     <article>
@@ -137,7 +151,11 @@ main>article {
   gap: 10px;
 }
 
-
+.switch {
+  align-items: center;
+  display: flex;
+  gap: 20px;
+}
 
 @media (max-width: 1024px) {
   .numeric {
@@ -147,6 +165,13 @@ main>article {
   main {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr auto;
+  }
+
+  .switch {
+    position: absolute;
+    gap: 10px;
+    right: 20px;
+    z-index: 9;
   }
 }
 </style>

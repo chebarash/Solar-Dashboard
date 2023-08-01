@@ -2,7 +2,7 @@
 import { ref, onMounted, watch } from 'vue';
 const props = defineProps<{
     period: { length: number, unit: number, options: Intl.DateTimeFormatOptions, name?: Intl.DateTimeFormatOptions, date: Intl.DateTimeFormatOptions },
-    imports: Array<{ date: Date; icons: Array<string> }>
+    data: Array<{ date: Date }>
 }>()
 
 type Coord = { x: number, y: number }
@@ -21,7 +21,7 @@ const setPeriod = () => {
     const now = new Date()
     const count: { [date: string]: number } = {};
     const getDateString = (date: Date, opt: Intl.DateTimeFormatOptions) => new Date(date).toLocaleString('en-GB', opt)
-    props.imports.forEach(({ date }) => {
+    props.data.forEach(({ date }) => {
         const name = getDateString(date, props.period.options)
         count[name] = (count[name] || 0) + 1;
     });
@@ -254,18 +254,31 @@ path {
 
 .horizontal li {
     width: 20px;
-}
-
-.horizontal li:nth-last-child(n+10)~li:nth-of-type(even) {
-    display: none;
-}
-
-li {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 6px;
+}
+
+.horizontal li:nth-last-child(n+24)~li {
+    display: none;
+}
+
+.horizontal li:nth-last-child(n+24)~li:nth-child(5n) {
+    display: flex;
+}
+
+.horizontal li:nth-last-child(n+60)~li {
+    display: none !important;
+}
+
+.horizontal li:nth-last-child(n+60)~li:nth-child(10n) {
+    display: flex !important;
+}
+
+.vertical li {
+    display: flex;
 }
 
 .value {

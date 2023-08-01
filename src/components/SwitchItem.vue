@@ -1,12 +1,12 @@
 <script setup lang="ts">
-defineProps<{ name: string, values: { [name: string]: any }, update: (index: { length: number, unit: number, options: Intl.DateTimeFormatOptions, name?: Intl.DateTimeFormatOptions, date: Intl.DateTimeFormatOptions }) => any }>()
+defineProps<{ def?: string, name: string, values: { [name: string]: any }, update: (index: any) => any }>()
 </script>
 
 <template>
     <ul>
-        <li v-for="(value, key) in values" :key="value">
+        <li v-for="(_, key) in  values " :key="key">
             <label>
-                <input @change="update(value)" :checked="key === `1W`" type="radio" :name="name" :id="name">
+                <input @change="update(key)" :checked="key === def" type="radio" :name="name" :id="name">
                 <p>{{ key }}</p>
             </label>
         </li>
@@ -15,13 +15,15 @@ defineProps<{ name: string, values: { [name: string]: any }, update: (index: { l
 
 <style scoped>
 ul {
-    width: max-content;
     padding: 4px;
     border-radius: 50px;
-    display: grid;
+    display: flex;
     background: var(--color-background-mute);
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 4px;
+    border: 2px solid transparent;
+}
+
+ul:focus-within {
+    border: 2px solid var(--blue);
 }
 
 li {
@@ -60,28 +62,39 @@ input:checked~p {
 
 @media (max-width: 720px) {
     ul {
-        position: absolute;
-        top: 25px;
-        right: 20px;
-        grid-template-columns: 1fr;
+        padding: 1px;
+        flex-direction: column;
         border-radius: 24px;
-        z-index: 9;
-        gap: 0;
+        background: var(--color-background-soft);
+        border: 1px solid var(--color-border);
     }
 
     p {
         display: none;
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+
+    label {
+        pointer-events: none;
+    }
+
+    ul:hover {
+        box-shadow: var(--box-shadow);
     }
 
     ul:hover p {
         display: flex;
     }
 
+    ul:hover label {
+        pointer-events: all;
+    }
+
     input:checked~p {
         display: flex;
-        padding: 12px 16px;
         color: var(--color-heading);
-        box-shadow: var(--box-shadow);
+        box-shadow: none;
         background: transparent;
     }
 }
